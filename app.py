@@ -88,16 +88,6 @@ CORS(app, resources={
     }
 })
 
-# Funkcja do dodawania nagłówków CORS
-@app.after_request
-def add_cors_headers(response):
-    """Dodaje nagłówki CORS do wszystkich odpowiedzi"""
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    return response
-
 # Rate limiting
 limiter = Limiter(
     app=app,
@@ -338,12 +328,31 @@ def analyze_flight_route():
         print(f"Błąd analizy trasy: {e}")
         return jsonify({'error': f'Błąd analizy trasy: {str(e)}'}), 500
 
+def validate_coordinates(lat, lon):
+    """Walidacja współrzędnych geograficznych"""
+    try:
+        lat = float(lat)
+        lon = float(lon)
+        if not (-90 <= lat <= 90):
+            return False, "Latitude must be between -90 and 90"
+        if not (-180 <= lon <= 180):
+            return False, "Longitude must be between -180 and 180"
+        return True, (lat, lon)
+    except (ValueError, TypeError):
+        return False, "Invalid coordinates format"
+
 @app.route('/api/weather/layers/temperature')
 def temperature_layer():
     """Warstwa temperatury - rzeczywiste dane z WeatherAPI.com"""
     try:
         lat = request.args.get('lat', 52.2297)
         lon = request.args.get('lon', 21.0122)
+        
+        # Walidacja współrzędnych
+        is_valid, result = validate_coordinates(lat, lon)
+        if not is_valid:
+            return jsonify({'error': result}), 400
+        lat, lon = result
         
         # Pobierz rzeczywiste dane pogodowe
         url = "http://api.weatherapi.com/v1/current.json"
