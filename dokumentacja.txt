@@ -1,0 +1,303 @@
+https://docs.mapbox.com/mapbox-gl-js/guides
+https://docs.mapbox.com/api/maps/mapbox-tiling-service/
+https://docs.mapbox.com/api/maps/uploads/
+https://docs.mapbox.com/api/maps/datasets/
+https://docs.mapbox.com/api/maps/tilequery/
+https://docs.mapbox.com/api/maps/vector-tiles/
+https://docs.mapbox.com/api/maps/raster-tiles/
+https://docs.mapbox.com/api/maps/static-images/
+https://docs.mapbox.com/api/maps/static-tiles/
+https://docs.mapbox.com/style-spec/reference/layers/
+https://docs.mapbox.com/style-spec/reference/expressions/
+https://docs.mapbox.com/style-spec/reference/sources/
+https://docs.mapbox.com/style-spec/reference/root/
+https://docs.mapbox.com/style-spec/reference/types/
+https://docs.mapbox.com/style-spec/reference/sprite/
+https://docs.mapbox.com/style-spec/reference/light/
+https://docs.mapbox.com/style-spec/reference/glyphs/
+https://docs.mapbox.com/style-spec/reference/terrain/
+https://docs.mapbox.com/style-spec/reference/schema/
+https://docs.mapbox.com/style-spec/reference/imports/
+https://docs.mapbox.com/style-spec/reference/projection/
+https://docs.mapbox.com/style-spec/reference/other/
+https://docs.mapbox.com/style-spec/reference/fog/
+https://docs.mapbox.com/style-spec/reference/rain/
+https://docs.mapbox.com/style-spec/reference/snow/
+https://docs.mapbox.com/style-spec/reference/slots/
+https://docs.mapbox.com/style-spec/reference/transition/
+https://docs.mapbox.com/style-spec/reference/featuresets/
+https://docs.mapbox.com/style-spec/guides/
+https://docs.mapbox.com/map-styles/standard/guides
+https://docs.mapbox.com/api/maps/styles/
+https://docs.mapbox.com/api/maps/fonts/
+https://docs.mapbox.com/api/search/geocoding/
+https://docs.mapbox.com/api/search/search-box/
+https://docs.mapbox.com/api/guides/
+https://docs.mapbox.com/api/guides/mcp-server/
+https://docs.mapbox.com/mapbox-search-js/guides/
+https://github.com/mapbox/mapbox-gl-geocoder
+https://docs.mapbox.com/api/search/search-box/
+https://docs.mapbox.com/playground/?topic=APIs
+https://www.weatherapi.com/docs/
+
+# 🌤️ Prognoza Przed Lotem - Ulepszona Wersja
+
+## 📋 Opis
+
+Zaawansowana aplikacja prognozy pogody przed lotem gołębi pocztowych z mapą 3D, animowanymi warstwami pogodowymi i inteligentną analizą tras.
+
+## ✨ Funkcje
+
+### 🎯 Kluczowe funkcje:
+
+1. **📡 Radar pogodowy** - Animowana warstwa radaru z kolorowym kodowaniem intensywności opadów
+2. **🎨 5-kolorowe kodowanie tras** - Precyzyjne określanie warunków lotu:
+   - 🟢 Doskonałe (80-100 pkt)
+   - 🔵 Dobre (60-79 pkt) 
+   - 🟡 Umiarkowane (40-59 pkt)
+   - 🟠 Słabe (20-39 pkt)
+   - 🔴 Niebezpieczne (0-19 pkt)
+3. **📅 Prognozy na 7 dni** - Wybór daty z szczegółową prognozą
+4. **🌤️ Aktualna pogoda** - Wyświetlanie aktualnych warunków przy starcie
+5. **🌩️ Efekty 3D** - Zaawansowane animacje warstw pogodowych
+6. **🎬 Kontrola animacji** - Regulowana prędkość animacji (0.1x - 3.0x)
+
+## 🚀 Uruchomienie
+
+### Wymagania:
+- Python 3.8+
+- Flask
+- Przeglądarka internetowa
+
+### Instalacja:
+
+1. **Sklonuj repozytorium:**
+```bash
+git clone <repository-url>
+cd prognoza-przed-lotem
+```
+
+2. **Zainstaluj zależności:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Uruchom aplikację:**
+```bash
+python app.py
+```
+
+4. **Otwórz przeglądarkę:**
+```
+http://localhost:5000/ai_preflight
+```
+
+## 🎮 Instrukcja obsługi
+
+### 🗺️ Panel warstw pogodowych (lewy)
+
+**Podstawowe warstwy:**
+- 🌡️ **Temperatura** - Heatmapa temperatury powietrza
+- 💨 **Wiatr** - Strzałki kierunku i prędkości wiatru
+- 🌧️ **Opady** - Kafelki opadów deszczu
+- 📡 **Radar pogodowy** - Animowany radar z kolorami intensywności
+- ☁️ **Zachmurzenie** - Pokrycie chmurami
+- 🛰️ **Satelita** - Widok satelitarny
+- 📊 **Ciśnienie** - Ciśnienie atmosferyczne
+- 💧 **Wilgotność** - Wilgotność powietrza
+- 👁️ **Widoczność** - Zasięg widoczności
+
+**Efekty 3D:**
+- 🏢 **Budynki 3D** - Trójwymiarowe budynki
+- ⛰️ **Teren 3D** - Topografia terenu
+- 🌩️ **Pogoda 3D** - Efekty 3D dla warstw pogodowych
+- 🎬 **Animacje 3D** - Automatyczny obrót kamery
+
+**Wysokość nad poziomem morza:**
+- 10m, 100m, 500m, 1000m, 1500m, 2000m
+
+### 🕊️ Panel planowania lotu (prawy)
+
+**Aktualna pogoda:**
+- Automatyczne wyświetlanie przy starcie aplikacji
+- Temperatura, wiatr, wilgotność, ciśnienie, widoczność
+- Wschód i zachód słońca
+
+**Prognoza na kolejne dni:**
+- Lista 7 dni z możliwością wyboru
+- Szczegółowe warunki dla wybranego dnia
+- Szanse opadów z kolorowym kodowaniem
+
+**Planowanie trasy:**
+1. Wybierz **miejsce startu** (miejscowość)
+2. Wybierz **metę** (hodowca)
+3. Ustaw **datę lotu**
+4. Ustaw **godzinę lotu**
+5. Kliknij **"Wyznacz trasę"** - narysuje kolorową trasę
+6. Kliknij **"Analizuj pogodę"** - szczegółowa analiza AI
+
+### ⏱️ Pasek czasowy (dolny)
+
+**Kontrolki:**
+- ⏪ **Przewiń wstecz** - Poprzednia godzina
+- ▶️ **Play** - Automatyczne przewijanie czasu
+- ⏸️ **Pauza** - Zatrzymaj animację
+- ⏹️ **Stop** - Powrót do początku
+- ⏩ **Przewiń naprzód** - Następna godzina
+
+**Suwak czasu:**
+- 48 kroków (30-minutowe interwały przez 24h)
+- Automatyczna aktualizacja warstw pogodowych
+
+## 🎯 Analiza tras lotu
+
+### Kolorowanie tras:
+- **🟢 Doskonałe**: Warunki idealne, 95% szans powodzenia
+- **🔵 Dobre**: Warunki bezpieczne, 85% szans powodzenia  
+- **🟡 Umiarkowane**: Wymagają uwagi, 65% szans powodzenia
+- **🟠 Słabe**: Odradzane, 35% szans powodzenia
+- **🔴 Niebezpieczne**: Zabronione, 10% szans powodzenia
+
+### Czynniki analizy:
+- **Temperatura**: Optymalna 15-25°C
+- **Wiatr**: Optymalny <15 km/h
+- **Wilgotność**: Optymalna 40-70%
+- **Widoczność**: Optymalna >10 km
+- **Ciśnienie**: Stabilność atmosferyczna
+
+### Popup na trasie:
+- Kliknij punkty na trasie dla szczegółów
+- Prognoża co 5km trasy
+- Wskaźnik warunków lotu (0-100)
+- Rekomendacje AI
+
+## 🔧 Zaawansowane funkcje
+
+### 📡 Radar pogodowy:
+- Animowane kafelki z przejściami kolorów
+- Zielony → Żółty → Pomarańczowy → Czerwony
+- Efekt promieniowania radaru
+- Synchronizacja z timeline'em
+
+### 🎬 Animacje 3D:
+- Automatyczny obrót kamery (360°)
+- Płynne zmiany pitch (30-60°)
+- Regulowana prędkość (0.1x - 3.0x)
+- Efekty wysokości dla warstw pogodowych
+
+### 🗺️ Porównywanie map:
+- **Satelita vs Standardowa** - Porównanie widoków
+- **Warstwy pogodowe** - Różne warstwy obok siebie
+- Pionowy lub poziomy podział
+- Synchronizowane przesuwanie
+
+## 📊 API Endpoints
+
+### Pogoda:
+- `/api/weather/current` - Aktualna pogoda
+- `/api/weather/forecast` - Prognoza na dni
+- `/api/weather/radar/tiles/{z}/{x}/{y}` - Kafelki radaru
+- `/api/weather/temperature` - Temperatura dla wysokości/czasu
+- `/api/weather/wind` - Dane wiatru
+- `/api/weather/humidity` - Wilgotność
+- `/api/weather/pressure` - Ciśnienie
+- `/api/weather/visibility` - Widoczność
+
+### Analiza tras:
+- `/api/analyze_flight_route` - Analiza trasy lotu
+- Ocena warunków na trasie
+- Rekomendacje AI
+- Czynniki ryzyka
+
+## 🎨 Personalizacja
+
+### Kontrola warstw:
+- Przezroczystość warstw (0-100%)
+- Kolejność wyświetlania
+- Kolorystyka radarów
+- Intensywność animacji
+
+### Style mapy:
+- Streets (standardowa)
+- Satellite (satelitarna)
+- Light (jasna)
+- Dark (ciemna)
+- Outdoors (turystyczna)
+
+## 📱 Responsywność
+
+- **Panele**: Przesuwane i zmienne rozmiary
+- **Drag & Drop**: Przemieszczanie paneli
+- **Resize**: Zmiana rozmiaru paneli
+- **Mobilne**: Automatyczna adaptacja
+
+## 🔗 Integracje
+
+- **Mapbox GL JS** - Mapa bazowa i 3D
+- **Mapbox Controls** - Dodatkowe kontrolki
+- **Rain Layer** - Animowane opady
+- **Compare** - Porównywanie map
+- **Opacity Control** - Kontrola przezroczystości
+
+## 📞 Wsparcie
+
+Aplikacja zawiera rozbudowaną konsolę debug - otwórz DevTools (F12) dla szczegółowych logów.
+
+## 🔧 Konfiguracja
+
+### Zmienne środowiskowe:
+```bash
+OPENWEATHER_API_KEY=your_openweather_api_key
+MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
+```
+
+### Plik .env:
+```env
+OPENWEATHER_API_KEY=your_openweather_api_key
+MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
+```
+
+## 🐛 Rozwiązywanie problemów
+
+### Mapa się nie ładuje:
+1. Sprawdź token Mapbox
+2. Sprawdź połączenie internetowe
+3. Wyczyść cache przeglądarki
+
+### Dane pogodowe nie ładują się:
+1. Sprawdź token OpenWeather API
+2. Sprawdź limit zapytań API
+3. Sprawdź logi serwera
+
+### Animacje są wolne:
+1. Zmniejsz prędkość animacji
+2. Wyłącz niepotrzebne warstwy
+3. Sprawdź wydajność przeglądarki
+
+## 📈 Rozwój
+
+### Dodanie nowych warstw:
+1. Dodaj warstwę w `app.js`
+2. Dodaj kontrolki w HTML
+3. Dodaj style w CSS
+4. Zaktualizuj dokumentację
+
+### Dodanie nowych API:
+1. Dodaj endpoint w `app.py`
+2. Dodaj obsługę w `app.js`
+3. Dodaj interfejs użytkownika
+4. Przetestuj funkcjonalność
+
+## 📄 Licencja
+
+MIT License - zobacz plik LICENSE dla szczegółów.
+
+## 👥 Autorzy
+
+- Główny programista: AI Assistant
+- Design: AI Assistant
+- Dokumentacja: AI Assistant
+
+---
+
+**🌤️ Prognoza Przed Lotem** - Inteligentna analiza pogody dla hodowców gołębi pocztowych 

@@ -1,0 +1,623 @@
+/* Style dla strony głównej (index.html) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Style dla aplikacji (ai_preflight.html) */
+body:has(#map) {
+    background: none;
+    display: block;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 20px;
+}
+
+h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.description {
+    color: #666;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 10px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.feature {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #007bff;
+}
+
+.feature h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.emoji {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.footer-info {
+    margin-top: 30px;
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* Dodatkowe style dla aplikacji */
+
+/* Style dla mapy */
+#map {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* Style dla paneli */
+.panel {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.weather-panel {
+    top: 20px;
+    left: 20px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.flight-panel {
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 10px 10px 0 0;
+}
+
+.panel-title {
+    margin: 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.panel-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.panel-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #666;
+    transition: background-color 0.2s;
+}
+
+.panel-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.panel-content {
+    padding: 15px;
+}
+
+/* Style dla kontrolek warstw */
+.layer-control {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-size: 14px;
+}
+
+.layer-control:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+    transform: translateX(5px);
+}
+
+.layer-control.active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+/* Style dla formularzy */
+select, input[type="text"], input[type="date"], input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Style dla informacji pogodowych */
+.weather-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.weather-item {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Dostępność - ukryte etykiety dla screen readerów */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Style dla timeline info */
+.timeline-info {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .weather-panel {
+        width: 90%;
+        left: 5%;
+        right: 5%;
+        max-height: 40vh;
+    }
+    
+    .flight-panel {
+        width: 90%;
+        left: 5%;
+        right: 5%;
+        top: 45vh;
+        max-height: 40vh;
+    }
+    
+    .timeline-panel {
+        width: 90%;
+        bottom: 5px;
+    }
+}
+
+/* Animacje */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Efekty hover */
+.layer-control:hover {
+    transform: translateX(5px);
+    transition: transform 0.2s ease;
+}
+
+.control-btn:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Style dla popupów */
+.mapboxgl-popup-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.mapboxgl-popup-close-button {
+    font-size: 18px;
+    color: #666;
+}
+
+.mapboxgl-popup-close-button:hover {
+    color: #333;
+}
+
+/* Style dla geocodera */
+.mapboxgl-ctrl-geocoder {
+    min-width: 200px;
+}
+
+.mapboxgl-ctrl-geocoder--input {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Style dla kontrolek mapy */
+.mapboxgl-ctrl-group {
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.mapboxgl-ctrl-group button {
+    border-radius: 0;
+}
+
+.mapboxgl-ctrl-group button:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.mapboxgl-ctrl-group button:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Style dla timeline */
+.timeline-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.timeline-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Style dla suwaków */
+input[type="range"]::-webkit-slider-track {
+    background: #ddd;
+    height: 4px;
+    border-radius: 2px;
+}
+
+input[type="range"]::-moz-range-track {
+    background: #ddd;
+    height: 4px;
+    border-radius: 2px;
+    border: none;
+}
+
+/* Style dla selectów */
+select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    font-size: 14px;
+    width: 100%;
+    margin: 5px 0;
+}
+
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* Style dla inputów */
+input[type="text"], input[type="date"], input[type="time"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* Style dla labeli */
+label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Style dla nagłówków */
+h3 {
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+h4 {
+    color: #555;
+    margin: 15px 0 10px 0;
+    font-size: 16px;
+}
+
+/* Style dla list */
+ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+li {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+/* Style dla sekcji */
+.route-info, .score-section, .recommendations, .warnings {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.warnings {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+}
+
+/* Style dla ikon */
+.emoji {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* Style dla loading */
+.loading {
+    animation: fadeIn 0.3s ease;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Style dla komunikatów */
+.error, .success {
+    animation: slideIn 0.3s ease;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+    max-width: 300px;
+}
+
+/* Style dla paneli */
+.weather-panel, .flight-panel, .timeline-panel {
+    animation: fadeIn 0.5s ease;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+/* Style dla aktywnych warstw */
+.layer-control.active {
+    animation: pulse 2s infinite;
+}
+
+/* Style dla wybranych dni prognozy */
+.forecast-day.selected {
+    animation: pulse 1s ease;
+}
+
+/* Style dla trasy */
+#route-layer {
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+}
+
+/* Style dla 3D efektów */
+.mapboxgl-map {
+    perspective: 1000px;
+}
+
+/* Style dla animacji */
+@keyframes weatherAnimation {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.weather-animation {
+    animation: weatherAnimation 2s ease-in-out infinite;
+}
+
+/* Style dla responsywności na małych ekranach */
+@media (max-width: 480px) {
+    .weather-panel, .flight-panel {
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .control-btn {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    
+    .timeline-controls {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .weather-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Style dla trybu ciemnego */
+@media (prefers-color-scheme: dark) {
+    .weather-panel, .flight-panel, .timeline-panel {
+        background: rgba(30, 30, 30, 0.95);
+        color: #fff;
+    }
+    
+    .layer-control {
+        background: #444;
+        border-color: #555;
+        color: #fff;
+    }
+    
+    .layer-control:hover {
+        background: #555;
+    }
+    
+    .weather-item {
+        background: #444;
+        color: #fff;
+    }
+    
+    .forecast-day {
+        background: #444;
+        color: #fff;
+    }
+    
+    .forecast-day:hover {
+        background: #555;
+    }
+    
+    select, input[type="text"], input[type="date"], input[type="time"] {
+        background: #333;
+        color: #fff;
+        border-color: #555;
+    }
+    
+    .route-info, .score-section, .recommendations {
+        background: #444;
+        color: #fff;
+    }
+}
+
+/* Style dla dostępności */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Style dla wysokiego kontrastu */
+@media (prefers-contrast: high) {
+    .control-btn {
+        border: 2px solid #000;
+    }
+    
+    .layer-control {
+        border: 2px solid #000;
+    }
+    
+    .score-indicator {
+        border: 2px solid #000;
+    }
+}
+
+/* Style dla drukowania */
+@media print {
+    .weather-panel, .flight-panel, .timeline-panel {
+        position: static;
+        background: white;
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+    
+    #map {
+        display: none;
+    }
+} 

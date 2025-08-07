@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌤️ Prognoza Przed Lotem</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🌤️</div>
+        <h1>Prognoza Przed Lotem</h1>
+        <p class="description">
+            Zaawansowana aplikacja prognozy pogody dla hodowców gołębi pocztowych z mapą 3D, 
+            animowanymi warstwami pogodowymi i inteligentną analizą tras.
+        </p>
+        
+        <a href="/ai_preflight" class="btn">🚀 Uruchom Aplikację</a>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🗺️ Mapa 3D</h3>
+                <p>Interaktywna mapa z Mapbox GL JS i efektami 3D</p>
+            </div>
+            <div class="feature">
+                <h3>🌤️ Prognoza Pogody</h3>
+                <p>Dane z OpenWeather API na 7 dni</p>
+            </div>
+            <div class="feature">
+                <h3>🕊️ Analiza Tras</h3>
+                <p>Inteligentna analiza warunków lotu gołębi</p>
+            </div>
+            <div class="feature">
+                <h3>🎬 Animacje</h3>
+                <p>Zaawansowane animacje warstw pogodowych</p>
+            </div>
+        </div>
+        
+        <div class="footer-info">
+            <p>Wykorzystuje technologie: Mapbox GL JS, OpenWeather API, Flask</p>
+        </div>
+    </div>
+</body>
+</html> 

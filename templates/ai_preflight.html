@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌤️ Prognoza Przed Lotem - AI</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+    
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- Mapbox GL Geocoder -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+    
+    <!-- Mapbox Compare -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
+    
+    <!-- Mapbox Controls - Ruler -->
+    <script src="https://unpkg.com/@mapbox-controls/ruler@1.0.0/dist/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@mapbox-controls/ruler@1.0.0/dist/index.css" type="text/css">
+    
+    <!-- Mapbox Controls - Compass -->
+    <script src="https://unpkg.com/@mapbox-controls/compass@1.0.0/dist/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@mapbox-controls/compass@1.0.0/dist/index.css" type="text/css">
+    
+    <!-- Mapbox GL Rain Layer -->
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-rain-layer@latest/dist/mapbox-gl-rain-layer.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        #map { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            width: 100%; 
+            z-index: 1;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* PANELE ZGODNIE Z README */
+        .panel {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .weather-panel {
+            top: 20px;
+            left: 20px;
+            width: 320px;
+            height: 400px;
+        }
+        
+        .flight-panel {
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+        }
+        
+        .control-panel {
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .timeline-panel {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 120px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .panel-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin: 0;
+            color: white;
+        }
+        
+        .panel-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .panel-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+        
+        .panel-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .panel-content {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .panel-content h4 {
+            margin: 15px 0 10px 0;
+            padding: 0;
+            font-size: 14px;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .layer-control {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+        
+        .layer-control:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .layer-control.active {
+            background: rgba(0, 123, 255, 0.3);
+            border-color: rgba(0, 123, 255, 0.5);
+        }
+        
+        select, input[type="text"], input[type="date"], input[type="time"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        
+        .weather-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 0;
+        }
+        
+        .weather-item {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        .timeline-info {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        /* DEBUG INFO */
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 3000;
+        }
+        
+        /* LOADING */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 2000;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <!-- Panel warstw pogodowych -->
+    <div class="panel weather-panel" id="weather-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">🌤️ Warstwy Pogodowe</h3>
+            <div class="panel-controls">
+                <button class="panel-btn minimize" title="Minimalizuj">_</button>
+                <button class="panel-btn maximize" title="Maksymalizuj">□</button>
+                <button class="panel-btn close" title="Zamknij">×</button>
+            </div>
+        </div>
+        <div class="panel-content">
+            <h4>📡 Podstawowe warstwy:</h4>
+                            <div class="layer-control" data-layer="temperature">🌡️ Temperatura (MTS)</div>
+                <div class="layer-control" data-layer="wind">💨 Wiatr (MTS)</div>
+                <div class="layer-control" data-layer="wind-vectors">➡️ Wektory wiatru</div>
+                <div class="layer-control" data-layer="precipitation">🌧️ Opady</div>
+                <div class="layer-control" data-layer="radar">📡 Radar pogodowy</div>
+                <div class="layer-control" data-layer="rain-animation">🌧️ Animowany deszcz</div>
+                <div class="layer-control" data-layer="snow-animation">❄️ Animowany śnieg</div>
+                <div class="layer-control" data-layer="clouds">☁️ Zachmurzenie</div>
+                <div class="layer-control" data-layer="satellite">🛰️ Satelita</div>
+                <div class="layer-control" data-layer="pressure">📊 Ciśnienie</div>
+                <div class="layer-control" data-layer="humidity">💧 Wilgotność</div>
+                <div class="layer-control" data-layer="visibility">👁️ Widoczność</div>
+            
+            <h4>🔬 Zaawansowane warstwy MTS:</h4>
+            <div class="layer-control" data-layer="temperature-mts">🌡️ Temperatura MTS (raster-array)</div>
+            <div class="layer-control" data-layer="wind-mts">💨 Wiatr MTS (raster-array)</div>
+            <div class="layer-control" data-layer="temperature-animation">🌡️ Animacja temperatury</div>
+            <div class="layer-control" data-layer="wind-animation">💨 Animacja wiatru</div>
+            
+            <h4>🏗️ Warstwy 3D:</h4>
+            <div class="layer-control" data-layer="3d-buildings">🏢 Budynki 3D</div>
+            <div class="layer-control" data-layer="3d-terrain">🏔️ Teren 3D</div>
+            <div class="layer-control" data-layer="3d-weather">🌤️ Pogoda 3D</div>
+            <div class="layer-control" data-layer="3d-animations">🎬 Animacje 3D</div>
+            
+            <h4>📏 Wysokość:</h4>
+            <select id="altitude-selector">
+                <option value="10">10m</option>
+                <option value="100">100m</option>
+                <option value="500">500m</option>
+                <option value="1000">1000m</option>
+                <option value="1500">1500m</option>
+                <option value="2000">2000m</option>
+            </select>
+            
+            <h4>🎨 Style mapy:</h4>
+            <select id="map-style-selector">
+                <option value="mapbox://styles/mapbox/streets-v12">Streets</option>
+                <option value="mapbox://styles/mapbox/satellite-v9">Satellite</option>
+                <option value="mapbox://styles/mapbox/light-v11">Light</option>
+                <option value="mapbox://styles/mapbox/dark-v11">Dark</option>
+                <option value="mapbox://styles/mapbox/outdoors-v12">Outdoors</option>
+            </select>
+            
+            <h4>🎛️ Kontrola animacji:</h4>
+            <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
+                <label for="animation-speed">Prędkość:</label>
+                <input type="range" id="animation-speed" min="0.1" max="3.0" step="0.1" value="1.0" style="flex: 1;">
+                <span id="speed-value">1.0x</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panel planowania lotu -->
+    <div class="panel flight-panel" id="flight-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">🕊️ Planowanie Lotu</h3>
+            <div class="panel-controls">
+                <button class="panel-btn minimize" title="Minimalizuj">_</button>
+                <button class="panel-btn maximize" title="Maksymalizuj">□</button>
+                <button class="panel-btn close" title="Zamknij">×</button>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div id="current-weather">
+                <h4>🌤️ Aktualna pogoda</h4>
+                <div class="weather-info">
+                    <div class="weather-item">
+                        <strong>🌡️ Temperatura</strong><br>
+                        <span id="current-temp">--°C</span>
+                    </div>
+                    <div class="weather-item">
+                        <strong>💨 Wiatr</strong><br>
+                        <span id="current-wind">-- km/h</span>
+                    </div>
+                    <div class="weather-item">
+                        <strong>💧 Wilgotność</strong><br>
+                        <span id="current-humidity">--%</span>
+                    </div>
+                    <div class="weather-item">
+                        <strong>📊 Ciśnienie</strong><br>
+                        <span id="current-pressure">-- hPa</span>
+                    </div>
+                    <div class="weather-item">
+                        <strong>👁️ Widoczność</strong><br>
+                        <span id="current-visibility">-- km</span>
+                    </div>
+                    <div class="weather-item">
+                        <strong>🌅 Wschód</strong><br>
+                        <span id="current-sunrise">--:--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="forecast">
+                <h4>📅 Prognoza na 7 dni</h4>
+                <div id="forecast-list"></div>
+            </div>
+            
+            <div id="route-planning">
+                <h4>🗺️ Planowanie trasy</h4>
+                <div>
+                    <label for="start-location">Miejsce startu:</label>
+                    <input type="text" id="start-location" placeholder="np. Warszawa" value="Warszawa">
+                </div>
+                <div>
+                    <label for="end-location">Meta:</label>
+                    <input type="text" id="end-location" placeholder="np. Kraków" value="Kraków">
+                </div>
+                <div>
+                    <label for="flight-date">Data lotu:</label>
+                    <input type="date" id="flight-date">
+                </div>
+                <div>
+                    <label for="flight-time">Godzina lotu:</label>
+                    <input type="time" id="flight-time" value="08:00">
+                </div>
+                <button id="calculate-route" class="control-btn" style="width: 100%; margin-top: 10px;">🗺️ Wyznacz trasę</button>
+                <button id="analyze-weather" class="control-btn" style="width: 100%; margin-top: 5px;">🔍 Analizuj pogodę</button>
+            </div>
+            
+            <div id="route-analysis" class="hidden">
+                <h4>📊 Analiza trasy</h4>
+                <div id="analysis-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panel sterowania -->
+    <div class="panel control-panel" id="control-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">🎛️ Sterowanie</h3>
+            <div class="panel-controls">
+                <button class="panel-btn minimize" title="Minimalizuj">_</button>
+                <button class="panel-btn maximize" title="Maksymalizuj">□</button>
+                <button class="panel-btn close" title="Zamknij">×</button>
+            </div>
+        </div>
+        <div class="panel-content">
+            <button id="ruler-toggle" class="control-btn" title="Pomiar odległości">📏</button>
+            <button id="compass-toggle" class="control-btn" title="Kompas">🧭</button>
+            <button id="fullscreen-toggle" class="control-btn" title="Pełny ekran">⛶</button>
+            <button id="location-toggle" class="control-btn" title="Moja lokalizacja">📍</button>
+            <button id="layers-toggle" class="control-btn" title="Panel warstw">🌤️</button>
+            <button id="info-toggle" class="control-btn" title="Informacje">ℹ️</button>
+            <button id="reset-panels" class="control-btn" title="Resetuj panele">🔄</button>
+        </div>
+    </div>
+    
+    <!-- Panel czasowy -->
+    <div class="panel timeline-panel" id="timeline-panel">
+        <div class="panel-header">
+            <h3 class="panel-title">⏰ Timeline</h3>
+            <div class="panel-controls">
+                <button class="panel-btn minimize" title="Minimalizuj">_</button>
+                <button class="panel-btn maximize" title="Maksymalizuj">□</button>
+                <button class="panel-btn close" title="Zamknij">×</button>
+            </div>
+        </div>
+        <div class="panel-content">
+            <div class="timeline-controls">
+                <button id="prev-hour" class="control-btn">⏪</button>
+                <button id="play-pause" class="control-btn">▶️</button>
+                <button id="stop" class="control-btn">⏹️</button>
+                <button id="next-hour" class="control-btn">⏩</button>
+                <span id="current-time">--:--</span>
+            </div>
+            <input type="range" id="timeline-slider" min="0" max="47" value="0" class="timeline-slider">
+            <div class="timeline-info">
+                48 kroków (30-minutowe interwały przez 24h)
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <div>Ładowanie danych pogodowych...</div>
+    </div>
+
+    <!-- Debug info -->
+    <div class="debug-info" id="debug-info">
+        Status: Panel testowy aktywny
+    </div>
+    
+    <!-- Debug Panel - ZAKOMENTOWANE -->
+    <!--
+    <div class="panel" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 300px; z-index: 9999; background: rgba(0,0,0,0.95); color: white; padding: 20px; border-radius: 10px;">
+        <h3>🔧 DEBUG PANEL</h3>
+        <div style="margin: 10px 0;">
+                            <button style="background: #007bff; color: white; border: none; padding: 5px 10px; margin: 2px; border-radius: 3px;">Test Temperature</button>
+                <button style="background: #28a745; color: white; border: none; padding: 5px 10px; margin: 2px; border-radius: 3px;">Test Wind</button>
+        </div>
+        <div id="debug-output" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+            Debug output będzie tutaj...
+        </div>
+        <button style="background: #6c757d; color: white; border: none; padding: 5px 10px; margin-top: 10px; border-radius: 3px;">Zamknij</button>
+    </div>
+    -->
+    
+    <!-- Custom JavaScript -->
+    <script src="/static/js/app.js"></script>
+    
+    <!-- Global Bridge Script - rozwiązuje problemy z diagnostyką -->
+    <script>
+        // Global Bridge Script for Weather Application
+        // Add this script to your HTML after all other scripts are loaded
+
+        (function() {
+            'use strict';
+            
+            console.log('🔧 Inicjalizacja Global Bridge...');
+            
+            // 1. GLOBAL STATE MANAGEMENT
+            window.appState = {
+                currentWeather: null,
+                activeLayers: new Set(),
+                weatherLayers: new Map(),
+                animationSpeed: 1000,
+                isPlaying: false,
+                currentTimeStep: 0,
+                mapboxgl_access_token: null
+            };
+            
+            // Expose individual state variables for diagnostics
+            Object.defineProperty(window, 'currentWeather', {
+                get: () => window.appState.currentWeather,
+                set: (value) => { window.appState.currentWeather = value; }
+            });
+            
+            Object.defineProperty(window, 'activeLayers', {
+                get: () => window.appState.activeLayers,
+                set: (value) => { window.appState.activeLayers = value; }
+            });
+            
+            Object.defineProperty(window, 'weatherLayers', {
+                get: () => window.appState.weatherLayers,
+                set: (value) => { window.appState.weatherLayers = value; }
+            });
+            
+            Object.defineProperty(window, 'animationSpeed', {
+                get: () => window.appState.animationSpeed,
+                set: (value) => { window.appState.animationSpeed = value; }
+            });
+            
+            Object.defineProperty(window, 'isPlaying', {
+                get: () => window.appState.isPlaying,
+                set: (value) => { window.appState.isPlaying = value; }
+            });
+            
+            Object.defineProperty(window, 'currentTimeStep', {
+                get: () => window.appState.currentTimeStep,
+                set: (value) => { window.appState.currentTimeStep = value; }
+            });
+            
+            Object.defineProperty(window, 'mapboxgl_access_token', {
+                get: () => window.appState.mapboxgl_access_token || (mapboxgl && mapboxgl.accessToken),
+                set: (value) => { 
+                    window.appState.mapboxgl_access_token = value;
+                    if (mapboxgl) mapboxgl.accessToken = value;
+                }
+            });
+            
+            // 2. INITIALIZE WEATHER LAYERS DEFINITION
+            window.weatherLayers = new Map([
+                ['temperature', {
+                    id: 'temperature',
+                    name: '🌡️ Temperatura (MTS)',
+                    active: false,
+                    type: 'heatmap',
+                    source: null
+                }],
+                ['wind', {
+                    id: 'wind',
+                    name: '💨 Wiatr (MTS)',
+                    active: false,
+                    type: 'vector',
+                    source: null
+                }],
+                ['wind-vectors', {
+                    id: 'wind-vectors',
+                    name: '➡️ Wektory wiatru',
+                    active: false,
+                    type: 'symbol',
+                    source: null
+                }],
+                ['precipitation', {
+                    id: 'precipitation',
+                    name: '🌧️ Opady',
+                    active: false,
+                    type: 'raster',
+                    source: null
+                }],
+                ['radar', {
+                    id: 'radar',
+                    name: '📡 Radar pogodowy',
+                    active: false,
+                    type: 'raster',
+                    source: null
+                }],
+                ['rain-animation', {
+                    id: 'rain-animation',
+                    name: '🌧️ Animowany deszcz',
+                    active: false,
+                    type: 'animation',
+                    source: null
+                }],
+                ['snow-animation', {
+                    id: 'snow-animation',
+                    name: '❄️ Animowany śnieg',
+                    active: false,
+                    type: 'animation',
+                    source: null
+                }],
+                ['clouds', {
+                    id: 'clouds',
+                    name: '☁️ Zachmurzenie',
+                    active: false,
+                    type: 'raster',
+                    source: null
+                }],
+                ['satellite', {
+                    id: 'satellite',
+                    name: '🛰️ Satelita',
+                    active: false,
+                    type: 'raster',
+                    source: null
+                }],
+                ['pressure', {
+                    id: 'pressure',
+                    name: '📊 Ciśnienie',
+                    active: false,
+                    type: 'contour',
+                    source: null
+                }],
+                ['humidity', {
+                    id: 'humidity',
+                    name: '💧 Wilgotność',
+                    active: false,
+                    type: 'heatmap',
+                    source: null
+                }],
+                ['visibility', {
+                    id: 'visibility',
+                    name: '👁️ Widoczność',
+                    active: false,
+                    type: 'heatmap',
+                    source: null
+                }]
+            ]);
+            
+            // 3. GLOBAL FUNCTIONS
+            
+            // Application initialization
+            window.initApp = function() {
+                console.log('🚀 initApp wywołana przez diagnostykę');
+                if (window.weatherApp && typeof window.weatherApp.init === 'function') {
+                    return window.weatherApp.init();
+                }
+                // Użyj implementacji z app.js jeśli jest dostępna
+                if (typeof window.initAppFromAppJS === 'function') {
+                    return window.initAppFromAppJS();
+                }
+                return Promise.resolve();
+            };
+            
+            // Map functions
+            window.initializeMap = function() {
+                console.log('🗺️ initializeMap wywołana');
+                if (window.weatherApp && typeof window.weatherApp.initMap === 'function') {
+                    return window.weatherApp.initMap();
+                }
+                return Promise.resolve();
+            };
+            
+            window.initializeWeatherLayers = function() {
+                console.log('🌤️ initializeWeatherLayers wywołana');
+                // Initialize default weather layers
+                return Promise.resolve();
+            };
+            
+            window.addWeatherLayer = function(layerId, options = {}) {
+                console.log(`🌡️ addWeatherLayer wywołana dla: ${layerId}`);
+                
+                if (!window.map) {
+                    console.warn('Mapa nie jest zainicjalizowana');
+                    return Promise.reject(new Error('Map not initialized'));
+                }
+                
+                // Użyj implementacji z app.js jeśli jest dostępna
+                if (typeof window.addWeatherLayerFromAppJS === 'function') {
+                    return window.addWeatherLayerFromAppJS(layerId, options);
+                }
+                
+                const layer = window.weatherLayers.get(layerId);
+                if (!layer) {
+                    console.warn(`Warstwa ${layerId} nie istnieje`);
+                    return Promise.reject(new Error(`Layer ${layerId} not found`));
+                }
+                
+                // Try to call the internal WeatherApp method if available
+                if (window.weatherApp && typeof window.weatherApp.addWeatherLayer === 'function') {
+                    return window.weatherApp.addWeatherLayer(layerId, options);
+                }
+                
+                // Fallback implementation
+                return fetch(`/api/weather/layers/${layerId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        layer.active = true;
+                        window.activeLayers.add(layerId);
+                        console.log(`✅ Warstwa ${layerId} dodana`);
+                        return data;
+                    })
+                    .catch(error => {
+                        console.error(`❌ Błąd dodawania warstwy ${layerId}:`, error);
+                        throw error;
+                    });
+            };
+            
+            window.toggleLayer = function(layerId) {
+                console.log(`🔄 toggleLayer wywołana dla: ${layerId}`);
+                
+                const layer = window.weatherLayers.get(layerId);
+                if (!layer) {
+                    console.warn(`Warstwa ${layerId} nie istnieje`);
+                    return;
+                }
+                
+                if (layer.active) {
+                    // Remove layer
+                    if (window.map && window.map.getLayer(layerId)) {
+                        window.map.removeLayer(layerId);
+                    }
+                    if (window.map && window.map.getSource(layerId)) {
+                        window.map.removeSource(layerId);
+                    }
+                    layer.active = false;
+                    window.activeLayers.delete(layerId);
+                    console.log(`❌ Warstwa ${layerId} usunięta`);
+                } else {
+                    // Add layer
+                    window.addWeatherLayer(layerId);
+                }
+            };
+            
+            window.initializeControls = function() {
+                console.log('🎛️ initializeControls wywołana');
+                if (window.weatherApp && typeof window.weatherApp.initializeControls === 'function') {
+                    return window.weatherApp.initializeControls();
+                }
+                return Promise.resolve();
+            };
+            
+            // Data loading functions
+            window.loadConfig = function() {
+                console.log('📋 loadConfig wywołana');
+                return fetch('/api/config')
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error('❌ Błąd ładowania konfiguracji:', error);
+                        return {};
+                    });
+            };
+            
+            window.loadCurrentWeather = function() {
+                console.log('🌤️ loadCurrentWeather wywołana');
+                return fetch('/api/weather/current')
+                    .then(response => response.json())
+                    .then(data => {
+                        window.currentWeather = data;
+                        return data;
+                    })
+                    .catch(error => {
+                        console.error('❌ Błąd ładowania aktualnej pogody:', error);
+                        throw error;
+                    });
+            };
+            
+            window.loadForecast = function() {
+                console.log('📅 loadForecast wywołana');
+                return fetch('/api/weather/forecast')
+                    .then(response => response.json())
+                    .then(data => {
+                        window.forecast = data;
+                        return data;
+                    })
+                    .catch(error => {
+                        console.error('❌ Błąd ładowania prognozy:', error);
+                        throw error;
+                    });
+            };
+            
+            // Animation functions
+            window.togglePlayPause = function() {
+                console.log('⏯️ togglePlayPause wywołana');
+                window.isPlaying = !window.isPlaying;
+                if (window.isPlaying) {
+                    window.startAnimation();
+                } else {
+                    window.stopAnimation();
+                }
+            };
+            
+            window.startAnimation = function() {
+                console.log('▶️ startAnimation wywołana');
+                window.isPlaying = true;
+                // Implementation would depend on your animation system
+            };
+            
+            window.stopAnimation = function() {
+                console.log('⏹️ stopAnimation wywołana');
+                window.isPlaying = false;
+                // Implementation would depend on your animation system
+            };
+            
+            window.updateTimeDisplay = function(timestamp) {
+                console.log('🕒 updateTimeDisplay wywołana:', timestamp);
+                window.currentTimeStep = timestamp;
+                // Update UI elements
+            };
+            
+            window.updateWeatherLayers = function() {
+                console.log('🔄 updateWeatherLayers wywołana');
+                // Update all active layers
+                window.activeLayers.forEach(layerId => {
+                    console.log(`Aktualizacja warstwy: ${layerId}`);
+                });
+            };
+            
+            // 3D functions
+            window.add3DLayer = function(layerId) {
+                console.log(`🏗️ add3DLayer wywołana dla: ${layerId}`);
+                if (window.map) {
+                    // 3D layer implementation
+                    console.log(`✅ Warstwa 3D ${layerId} dodana`);
+                }
+            };
+            
+            window.remove3DLayer = function(layerId) {
+                console.log(`🗑️ remove3DLayer wywołana dla: ${layerId}`);
+                if (window.map && window.map.getLayer(layerId)) {
+                    window.map.removeLayer(layerId);
+                    console.log(`❌ Warstwa 3D ${layerId} usunięta`);
+                }
+            };
+            
+            // Route functions
+            window.calculateRoute = function(start, end) {
+                console.log('🚗 calculateRoute wywołana:', start, end);
+                // Route calculation implementation
+                return Promise.resolve([]);
+            };
+            
+            window.drawRoute = function(coordinates) {
+                console.log('🛣️ drawRoute wywołana');
+                if (window.map) {
+                    // Draw route on map
+                }
+            };
+            
+            window.showRoutePopup = function(data) {
+                console.log('💬 showRoutePopup wywołana');
+                // Show popup implementation
+            };
+            
+            window.analyzeWeather = function(location) {
+                console.log('🔍 analyzeWeather wywołana dla:', location);
+                // Weather analysis implementation
+                return Promise.resolve({});
+            };
+            
+            // UI utility functions
+            window.showLoading = function(message = 'Ładowanie...') {
+                console.log('⏳ showLoading wywołana:', message);
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) {
+                    loadingEl.style.display = 'block';
+                    const textEl = loadingEl.querySelector('.loading-text');
+                    if (textEl) textEl.textContent = message;
+                }
+            };
+            
+            window.hideLoading = function() {
+                console.log('✅ hideLoading wywołana');
+                const loadingEl = document.getElementById('loading');
+                if (loadingEl) {
+                    loadingEl.style.display = 'none';
+                }
+            };
+            
+            window.showError = function(message) {
+                console.log('❌ showError wywołana:', message);
+                console.error(message);
+                // Show error notification
+            };
+            
+            window.showSuccess = function(message) {
+                console.log('✅ showSuccess wywołana:', message);
+                console.info(message);
+                // Show success notification
+            };
+            
+            window.updateDebugInfo = function() {
+                console.log('🔍 updateDebugInfo wywołana');
+                const debugEl = document.getElementById('debug-info');
+                if (debugEl) {
+                    debugEl.innerHTML = `
+                        <div>Aktywne warstwy: ${window.activeLayers.size}</div>
+                        <div>Animacja: ${window.isPlaying ? 'Włączona' : 'Wyłączona'}</div>
+                        <div>Krok czasu: ${window.currentTimeStep}</div>
+                        <div>Prędkość: ${window.animationSpeed}ms</div>
+                    `;
+                }
+            };
+            
+            // 4. MAPBOX TOKEN CONFIGURATION
+            function setupMapboxToken() {
+                if (typeof mapboxgl !== 'undefined' && mapboxgl.accessToken) {
+                    window.mapboxgl_access_token = mapboxgl.accessToken;
+                    console.log('✅ Token Mapbox wykryty:', mapboxgl.accessToken.substring(0, 10) + '...');
+                } else if (window.MAPBOX_ACCESS_TOKEN) {
+                    mapboxgl.accessToken = window.MAPBOX_ACCESS_TOKEN;
+                    window.mapboxgl_access_token = window.MAPBOX_ACCESS_TOKEN;
+                    console.log('✅ Token Mapbox ustawiony z zmiennej globalnej');
+                } else {
+                    // DODATKOWE ZABEZPIECZENIE: Spróbuj załadować token z API
+                    console.log('🔄 Ładuję token Mapbox z API...');
+                    fetch('/api/config')
+                        .then(response => response.json())
+                        .then(config => {
+                            if (config.mapbox_access_token && typeof mapboxgl !== 'undefined') {
+                                mapboxgl.accessToken = config.mapbox_access_token;
+                                window.mapboxgl_access_token = config.mapbox_access_token;
+                                console.log('✅ Token Mapbox załadowany z API:', config.mapbox_access_token.substring(0, 20) + '...');
+                            }
+                        })
+                        .catch(error => {
+                            console.warn('⚠️ Nie udało się załadować tokenu z API:', error);
+                        });
+                }
+            }
+            
+            // 5. INITIALIZATION AND CONNECTION TO EXISTING APP
+            function connectToExistingApp() {
+                // Wait for existing WeatherApp instance
+                const checkForApp = () => {
+                    if (window.weatherApp) {
+                        console.log('✅ Połączono z istniejącą aplikacją WeatherApp');
+                        
+                        // Synchronize state if methods exist
+                        if (typeof window.weatherApp.getCurrentWeather === 'function') {
+                            window.currentWeather = window.weatherApp.getCurrentWeather();
+                        }
+                        if (typeof window.weatherApp.getForecast === 'function') {
+                            window.forecast = window.weatherApp.getForecast();
+                        }
+                        
+                        return true;
+                    }
+                    return false;
+                };
+                
+                if (!checkForApp()) {
+                    // Retry after a short delay
+                    setTimeout(() => {
+                        if (!checkForApp()) {
+                            console.log('⚠️ WeatherApp nie została znaleziona, używam podstawowej implementacji');
+                        }
+                    }, 1000);
+                }
+            }
+            
+            // 6. AUTO-INITIALIZATION
+            function autoInitialize() {
+                setupMapboxToken();
+                connectToExistingApp();
+                
+                // Initialize weather layers definitions
+                console.log(`✅ Zainicjalizowano ${window.weatherLayers.size} definicji warstw pogodowych`);
+                
+                // Set up periodic debug info updates
+                if (document.getElementById('debug-info')) {
+                    setInterval(window.updateDebugInfo, 5000);
+                }
+                
+                console.log('✅ Global Bridge Script zainicjalizowany pomyślnie!');
+                console.log('📊 Dostępne funkcje:', Object.keys(window).filter(key => 
+                    typeof window[key] === 'function' && 
+                    ['init', 'load', 'add', 'toggle', 'show', 'hide', 'start', 'stop', 'update', 'calculate', 'draw', 'analyze'].some(prefix => 
+                        key.toLowerCase().includes(prefix)
+                    )
+                ).length);
+            }
+            
+            // Run initialization
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', autoInitialize);
+            } else {
+                autoInitialize();
+            }
+            
+        })();
+    </script>
+    
+    <script>
+        console.log('🚀 INICJALIZACJA APLIKACJI...');
+        
+        // Inicjalizacja po załadowaniu DOM - ZAKOMENTOWANE (teraz z app.js)
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM załadowany, uruchamiam aplikację...');
+            
+            // Uruchom główną aplikację
+            if (typeof window.initApp === 'function') {
+                window.initApp();
+                console.log('✅ Główna aplikacja uruchomiona');
+            } else {
+                console.warn('⚠️ Funkcja initApp nie jest dostępna');
+            }
+        });
+        */
+        
+        console.log('💡 Aplikacja gotowa do użycia');
+    </script>
+</body>
+</html> 

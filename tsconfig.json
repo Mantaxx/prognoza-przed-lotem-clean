@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true
+  },
+  "include": [
+    "static/js/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.less",
+    "**/*.html",
+    "**/*.htm",
+    "**/*.md",
+    "**/*.py",
+    "**/*.txt",
+    "**/*.json",
+    "**/*.xml",
+    "**/*.yaml",
+    "**/*.yml",
+    "static/css/**/*",
+    "templates/**/*",
+    "*.css",
+    "*.html",
+    "*.md",
+    "*.py",
+    "*.txt",
+    "*.json"
+  ]
+} 

@@ -1,0 +1,62 @@
+{
+  "Claude API Test": {
+    "prefix": "claude-test",
+    "body": [
+      "$headers = @{",
+      "    \"Content-Type\" = \"application/json\"",
+      "    \"Authorization\" = \"Bearer ${1:YOUR_API_KEY}\"",
+      "}",
+      "",
+      "$body = @{",
+      "    \"messages\" = @(",
+      "        @{",
+      "            \"role\" = \"system\"",
+      "            \"content\" = \"${2:You are a helpful assistant.}\"",
+      "        },",
+      "        @{",
+      "            \"role\" = \"user\"",
+      "            \"content\" = \"${3:Your message here}\"",
+      "        }",
+      "    )",
+      "    \"max_tokens\" = ${4:100}",
+      "    \"model\" = \"${5:claude-3-sonnet-20240229}\"",
+      "} | ConvertTo-Json",
+      "",
+      "try {",
+      "    $response = Invoke-WebRequest -Uri \"https://api.anthropic.com/v1/messages\" -Method Post -Headers $headers -Body $body",
+      "    $response.Content | ConvertFrom-Json | ConvertTo-Json -Depth 10",
+      "} catch {",
+      "    Write-Host \"Błąd: $($_.Exception.Message)\"",
+      "    if ($_.Exception.Response) {",
+      "        $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())",
+      "        $responseBody = $reader.ReadToEnd()",
+      "        Write-Host \"Szczegóły błędu: $responseBody\"",
+      "    }",
+      "}"
+    ],
+    "description": "Test Claude API w PowerShell"
+  },
+  "Claude API Simple": {
+    "prefix": "claude-simple",
+    "body": [
+      "$headers = @{",
+      "    \"Content-Type\" = \"application/json\"",
+      "    \"Authorization\" = \"Bearer ${1:YOUR_API_KEY}\"",
+      "}",
+      "",
+      "$body = @{",
+      "    \"messages\" = @(",
+      "        @{",
+      "            \"role\" = \"user\"",
+      "            \"content\" = \"${2:Your message}\"",
+      "        }",
+      "    )",
+      "    \"max_tokens\" = 100",
+      "    \"model\" = \"claude-3-sonnet-20240229\"",
+      "} | ConvertTo-Json",
+      "",
+      "Invoke-WebRequest -Uri \"https://api.anthropic.com/v1/messages\" -Method Post -Headers $headers -Body $body"
+    ],
+    "description": "Prosty test Claude API"
+  }
+} 
